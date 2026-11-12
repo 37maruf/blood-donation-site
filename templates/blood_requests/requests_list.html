@@ -1,0 +1,37 @@
+{% extends "base.html" %}{% load bilingual %}
+{% block title %}{% if mode == 'sent' %}{% t "Requests sent" "পাঠানো অনুরোধ" %}{% else %}{% t "Requests received" "পাওয়া অনুরোধ" %}{% endif %}{% endblock %}
+{% block content %}
+<h1 class="page-title">{% if mode == 'sent' %}{% t "Requests I sent" "আমার পাঠানো অনুরোধ" %}{% else %}{% t "Requests I received" "আমার পাওয়া অনুরোধ" %}{% endif %}</h1>
+<div class="rows">
+{% for r in requests %}
+  <div class="row-card">
+    <span class="drop drop-sm"><span>{{ r.blood_group }}</span></span>
+    <div class="row-main">
+      <strong>{{ r.hospital_location }}</strong>
+      <span class="muted">{% t "needed by" "লাগবে" %} {{ r.required_date|date:"j M Y"|lnum }}</span>
+      {% if mode == 'sent' %}<div class="muted">{% t "To" "প্রাপক:" %} {{ r.donor.profile.masked_name }}</div>
+      {% else %}<div class="muted">{% t "From" "প্রেরক:" %} {{ r.requester.profile.full_name }}</div>{% endif %}
+      {% if r.message %}<div>{{ r.message }}</div>{% endif %}
+    </div>
+    <div class="row-side"><span class="chip chip-normal">{{ r.get_status_display|tr }}</span>
+      <div class="row-actions">
+      {% if mode == 'received' %}
+        {% if r.status == 'PENDING' %}
+          <form method="post" action="{% url 'blood_requests:request_accept' r.pk %}">{% csrf_token %}<button class="btn btn-ok btn-sm">{% t "Accept" "গ্রহণ" %}</button></form>
+          <form method="post" action="{% url 'blood_requests:request_reject' r.pk %}">{% csrf_token %}<button class="btn btn-danger-soft btn-sm">{% t "Reject" "প্রত্যাখ্যান" %}</button></form>
+        {% elif r.status == 'ACCEPTED' %}
+          <form method="post" action="{% url 'blood_requests:request_complete' r.pk %}">{% csrf_token %}<button class="btn btn-brand btn-sm">{% t "Mark completed" "সম্পন্ন চিহ্নিত করুন" %}</button></form>
+        {% endif %}
+      {% else %}
+        {% if r.status == 'PENDING' or r.status == 'ACCEPTED' %}
+          <form method="post" action="{% url 'blood_requests:request_cancel' r.pk %}" data-confirm="{% t 'Cancel this request?' 'এই অনুরোধ বাতিল করবেন?' %}">{% csrf_token %}<input type="hidden" name="back" value="sent"><button class="btn btn-danger-soft btn-sm">{% t "Cancel" "বাতিল" %}</button></form>
+        {% endif %}
+        {% if r.status == 'ACCEPTED' %}
+          <form method="post" action="{% url 'blood_requests:request_complete' r.pk %}">{% csrf_token %}<input type="hidden" name="back" value="sent"><button class="btn btn-brand btn-sm">{% t "Mark completed" "সম্পন্ন চিহ্নিত করুন" %}</button></form>
+        {% endif %}
+      {% endif %}
+      </div></div>
+  </div>
+{% empty %}<p class="muted">{% t "Nothing here yet." "এখানে এখনো কিছু নেই।" %}</p>{% endfor %}
+</div>
+{% endblock %}

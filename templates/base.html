@@ -1,0 +1,147 @@
+{% load static bilingual %}<!doctype html>
+<html lang="{{ LANG }}" data-bs-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}{{ org.name|tr }}{% endblock %} | {{ org.name|tr }}</title>
+<meta name="description" content="{% t 'Surjotori connects blood donors and families in Rajbari district, Bangladesh.' 'সূর্যতরী রাজবাড়ী জেলার রক্তদাতা ও রক্তপ্রত্যাশী পরিবারকে এক সুতোয় বাঁধে।' %}">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" type="image/svg+xml" href="{% static 'img/mark.svg' %}">
+<link rel="alternate icon" href="{% static 'img/logo.png' %}">
+<script>
+  /* Set the theme before first paint so the page never flashes the wrong colours. */
+  (function () {
+    try {
+      var saved = localStorage.getItem("sj-theme");
+      var theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-bs-theme", theme);
+    } catch (e) {}
+  })();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="{% static 'css/site.css' %}" rel="stylesheet">
+</head>
+<body>
+{% include "partials/_sprite.html" %}
+<a class="skip-link" href="#main">{% t "Skip to content" "মূল অংশে যান" %}</a>
+
+<header class="site-header">
+  <nav class="navbar navbar-expand-lg" aria-label="{% t 'Main' 'মূল মেনু' %}">
+    <div class="container">
+      <a class="brand" href="{% url 'core:home' %}">
+        <svg class="brand-mark" aria-hidden="true"><use href="#sj-mark"/></svg>
+        <span class="brand-name">{{ org.name|tr }}</span>
+      </a>
+
+      <div class="nav-tools order-lg-last">
+        <div class="lang-switch" role="group" aria-label="{% t 'Language' 'ভাষা' %}">
+          <a href="{% url 'core:set_language' 'en' %}?next={{ request.get_full_path|urlencode }}" lang="en"
+             {% if LANG == 'en' %}aria-current="true" class="on"{% endif %}>EN</a>
+          <a href="{% url 'core:set_language' 'bn' %}?next={{ request.get_full_path|urlencode }}" lang="bn"
+             {% if LANG == 'bn' %}aria-current="true" class="on"{% endif %}>বাং</a>
+        </div>
+        <button class="icon-btn" type="button" id="theme-toggle" aria-label="{% t 'Switch between light and dark theme' 'আলো ও অন্ধকার থিম বদলান' %}">
+          <svg class="ico ico-moon" aria-hidden="true"><use href="#i-moon"/></svg>
+          <svg class="ico ico-sun" aria-hidden="true"><use href="#i-sun"/></svg>
+        </button>
+        {% if user.is_authenticated %}
+        <a class="icon-btn position-relative" href="{% url 'notifications:list' %}" aria-label="{% t 'Notifications' 'বিজ্ঞপ্তি' %}">
+          <svg class="ico" aria-hidden="true"><use href="#i-bell"/></svg>
+          {% if unread_count %}<span class="dot-count">{{ unread_count|lnum }}</span>{% endif %}
+        </a>
+        {% endif %}
+        <button class="icon-btn d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#nav"
+                aria-controls="nav" aria-expanded="false" aria-label="{% t 'Open menu' 'মেনু খুলুন' %}">
+          <span class="burger" aria-hidden="true"></span>
+        </button>
+      </div>
+
+      <div class="collapse navbar-collapse" id="nav">
+        {% with url=request.resolver_match.view_name|default:"" %}
+        <ul class="navbar-nav main-links me-auto">
+          <li class="nav-item"><a class="nav-link {% if url == 'core:home' %}active{% endif %}" href="{% url 'core:home' %}">{% t "Home" "হোম" %}</a></li>
+          <li class="nav-item"><a class="nav-link {% if url == 'members:donor_list' %}active{% endif %}" href="{% url 'members:donor_list' %}">{% t "Donors" "রক্তদাতা" %}</a></li>
+          <li class="nav-item"><a class="nav-link {% if url == 'members:donor_search' %}active{% endif %}" href="{% url 'members:donor_search' %}">{% t "Find a donor" "দাতা খুঁজুন" %}</a></li>
+          <li class="nav-item"><a class="nav-link {% if 'need_' in url %}active{% endif %}" href="{% url 'blood_requests:need_list' %}">{% t "Blood needs" "রক্তের প্রয়োজন" %}</a></li>
+          <li class="nav-item"><a class="nav-link {% if 'campaigns:' in url %}active{% endif %}" href="{% url 'campaigns:list' %}">{% t "Campaigns" "কর্মসূচি" %}</a></li>
+          <li class="nav-item"><a class="nav-link {% if url == 'content:about' %}active{% endif %}" href="{% url 'content:about' %}">{% t "About" "আমাদের কথা" %}</a></li>
+        </ul>
+        {% endwith %}
+
+        <div class="nav-account">
+          {% if user.is_authenticated %}
+          <div class="dropdown">
+            <button class="account-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <span class="avatar" aria-hidden="true">{{ user.profile.full_name|default:user.email|slice:":1"|upper }}</span>
+              <span class="account-name">{{ user.profile.full_name|default:user.email }}</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="{% url 'dashboard:index' %}">{% t "Dashboard" "ড্যাশবোর্ড" %}</a></li>
+              <li><a class="dropdown-item" href="{% url 'members:profile' %}">{% t "My profile" "আমার প্রোফাইল" %}</a></li>
+              <li><a class="dropdown-item" href="{% url 'accounts:security' %}">{% t "Account security" "অ্যাকাউন্টের নিরাপত্তা" %}</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><form method="post" action="{% url 'accounts:logout' %}">{% csrf_token %}<button class="dropdown-item">{% t "Log out" "লগআউট" %}</button></form></li>
+            </ul>
+          </div>
+          {% else %}
+          <a class="btn btn-ghost" href="{% url 'accounts:login' %}">{% t "Log in" "লগইন" %}</a>
+          <a class="btn btn-brand" href="{% url 'accounts:register' %}">{% t "Join now" "যোগ দিন" %}</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<main id="main">
+{% if messages %}
+<div class="container flash-wrap">{% for m in messages %}
+  <div class="flash flash-{% if m.tags == 'error' %}danger{% else %}{{ m.tags|default:'info' }}{% endif %}" role="{% if m.tags == 'error' %}alert{% else %}status{% endif %}">
+    <svg class="ico" aria-hidden="true"><use href="#{% if m.tags == 'success' %}i-check{% elif m.tags == 'error' or m.tags == 'warning' %}i-alert{% else %}i-info{% endif %}"/></svg>
+    <span>{{ m|tr }}</span>
+    <button type="button" class="flash-close" aria-label="{% t 'Dismiss' 'বন্ধ করুন' %}">&times;</button>
+  </div>{% endfor %}
+</div>{% endif %}
+{% block fullwidth %}<div class="container page">{% block content %}{% endblock %}</div>{% endblock %}
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="row gy-4">
+      <div class="col-lg-5">
+        <a class="brand brand-foot" href="{% url 'core:home' %}">
+          <svg class="brand-mark" aria-hidden="true"><use href="#sj-mark"/></svg>
+          <span class="brand-name">{{ org.name|tr }}</span>
+        </a>
+        <p class="foot-tag">{{ org.tagline|tr }} &ndash; {% t "Rajbari district" "রাজবাড়ী জেলা" %}</p>
+        <p class="foot-note">{% t "Donation is voluntary. Blood must never be sold." "রক্তদান স্বেচ্ছায়। রক্ত কখনো বিক্রি করা যাবে না।" %}</p>
+      </div>
+      <div class="col-6 col-lg-3">
+        <h2 class="foot-h">{% t "Explore" "দেখুন" %}</h2>
+        <ul class="foot-links">
+          <li><a href="{% url 'members:donor_search' %}">{% t "Find a donor" "দাতা খুঁজুন" %}</a></li>
+          <li><a href="{% url 'blood_requests:need_list' %}">{% t "Blood needs" "রক্তের প্রয়োজন" %}</a></li>
+          <li><a href="{% url 'campaigns:list' %}">{% t "Campaigns" "কর্মসূচি" %}</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-lg-4">
+        <h2 class="foot-h">{% t "About us" "আমাদের সম্পর্কে" %}</h2>
+        <ul class="foot-links">
+          <li><a href="{% url 'content:about' %}">{% t "About" "আমাদের কথা" %}</a></li>
+          <li><a href="{% url 'content:contact' %}">{% t "Contact" "যোগাযোগ" %}</a></li>
+          <li><a href="{% url 'content:terms' %}">{% t "Terms" "শর্তাবলি" %}</a></li>
+          <li><a href="{% url 'content:privacy' %}">{% t "Privacy" "গোপনীয়তা" %}</a></li>
+          {% if org.facebook_url %}<li><a href="{{ org.facebook_url }}" rel="noopener noreferrer">Facebook</a></li>{% endif %}
+        </ul>
+      </div>
+    </div>
+    <p class="foot-fine">{% t "Availability shown on this site follows a 60-day website rule only. It is not medical clearance." "এই সাইটে দেখানো প্রাপ্যতা শুধু ৬০ দিনের ওয়েবসাইট-নিয়ম অনুসরণ করে। এটি চিকিৎসাগত ছাড়পত্র নয়।" %}</p>
+  </div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'js/site.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+{% extends "base.html" %}{% load bilingual %}
+{% block title %}{% t "Notifications" "বিজ্ঞপ্তি" %}{% endblock %}
+{% block content %}
+<h1 class="page-title">{% t "Notifications" "বিজ্ঞপ্তি" %}</h1>
+<div class="rows">
+{% for n in page %}
+  <div class="row-card{% if not n.is_read %} is-unread{% endif %}">
+    <div class="row-main"><strong>{{ n.title }}</strong>{% if n.body %}<div>{{ n.body }}</div>{% endif %}
+      <div class="muted">{{ n.created_at|date:"j M Y, g:i A"|lnum }}</div></div>
+    <div class="row-actions">
+      {% if n.link %}<a class="btn btn-ghost btn-sm" href="{{ n.link }}">{% t "Open" "খুলুন" %}</a>{% endif %}
+      {% if not n.is_read %}<form method="post" action="{% url 'notifications:read' n.pk %}">{% csrf_token %}<button class="btn btn-ghost btn-sm">{% t "Mark read" "পড়া হয়েছে" %}</button></form>{% endif %}
+    </div>
+  </div>
+{% empty %}<p class="muted">{% t "No notifications yet." "এখনো কোনো বিজ্ঞপ্তি নেই।" %}</p>{% endfor %}
+</div>
+{% include "partials/_pagination.html" %}
+{% endblock %}

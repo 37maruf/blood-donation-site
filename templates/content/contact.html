@@ -1,0 +1,19 @@
+{% extends "base.html" %}{% load bilingual %}
+{% block title %}{{ page.display_title }}{% endblock %}
+{% block content %}
+<article class="prose narrow">
+  <h1 class="page-title">{{ page.display_title }}</h1>
+  {{ page.display_body|prose }}
+  <div class="panel contact-card">
+    <h2>{{ org.name|tr }} &ndash; {{ org.tagline|tr }}</h2>
+    <ul class="contact-list">
+      {% if org.address %}<li><svg class="ico" aria-hidden="true"><use href="#i-pin"/></svg>{{ org.address }}</li>{% endif %}
+      {% if org.phone %}<li>{% t "Phone:" "ফোন:" %} <a href="tel:{{ org.phone }}">{{ org.phone }}</a></li>{% endif %}
+      {% if org.email %}<li>{% t "Email:" "ইমেইল:" %} <a href="mailto:{{ org.email }}">{{ org.email }}</a></li>{% endif %}
+      {% if org.facebook_url %}<li><a href="{{ org.facebook_url }}" rel="noopener noreferrer">Facebook</a></li>{% endif %}
+      {% if org.messenger_url %}<li><a href="{{ org.messenger_url }}" rel="noopener noreferrer">Messenger</a></li>{% endif %}
+      {% if org.youtube_url %}<li><a href="{{ org.youtube_url }}" rel="noopener noreferrer">YouTube</a></li>{% endif %}
+      {% if not org.phone and not org.email %}<li class="muted">{% t "Phone and email will be published here soon." "ফোন ও ইমেইল শিগগিরই এখানে প্রকাশ করা হবে।" %}</li>{% endif %}
+    </ul></div>
+</article>
+{% endblock %}

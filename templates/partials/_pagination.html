@@ -1,0 +1,8 @@
+{% load bilingual %}
+{% if page.paginator.num_pages > 1 %}
+<nav aria-label="{% t 'Pagination' 'পৃষ্ঠা' %}" class="pager">
+  {% if page.has_previous %}<a class="btn btn-ghost" href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ page.previous_page_number }}">{% t "Previous" "আগের" %}</a>{% else %}<span></span>{% endif %}
+  <span class="pager-now">{% t "Page" "পৃষ্ঠা" %} {{ page.number|lnum }} / {{ page.paginator.num_pages|lnum }}</span>
+  {% if page.has_next %}<a class="btn btn-ghost" href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ page.next_page_number }}">{% t "Next" "পরের" %}</a>{% else %}<span></span>{% endif %}
+</nav>
+{% endif %}

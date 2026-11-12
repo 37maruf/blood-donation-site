@@ -1,0 +1,15 @@
+{% load bilingual %}
+<a class="need need-{{ p.urgency|lower }}" href="{% url 'blood_requests:need_detail' p.pk %}">
+  <span class="drop"><span>{{ p.blood_group }}</span></span>
+  <span class="need-body">
+    <span class="need-top">
+      <strong>{{ p.units|lnum }} {% if p.units == 1 %}{% t "unit" "ইউনিট" %}{% else %}{% t "units" "ইউনিট" %}{% endif %}</strong>
+      <span class="chip chip-{{ p.urgency|lower }}">{{ p.get_urgency_display|tr }}</span>
+    </span>
+    <span class="need-hosp">{{ p.hospital_name }}</span>
+    <span class="need-meta">
+      <span><svg class="ico" aria-hidden="true"><use href="#i-pin"/></svg>{{ p.hospital_location }}</span>
+      <span><svg class="ico" aria-hidden="true"><use href="#i-cal"/></svg>{{ p.required_date|date:"j M Y"|lnum }}</span>
+    </span>
+  </span>
+</a>

@@ -1,0 +1,13 @@
+{% extends "base.html" %}{% load bilingual %}
+{% block title %}{% t "My blood need posts" "আমার রক্তের পোস্ট" %}{% endblock %}
+{% block content %}
+<div class="page-head"><h1 class="page-title">{% t "My blood need posts" "আমার রক্তের পোস্ট" %}</h1>
+  <a class="btn btn-brand" href="{% url 'blood_requests:need_create' %}">{% t "New post" "নতুন পোস্ট" %}</a></div>
+<div class="rows">
+{% for p in posts %}<a class="row-link" href="{% url 'blood_requests:need_detail' p.pk %}">
+  <span class="drop drop-sm"><span>{{ p.blood_group }}</span></span>
+  <span class="row-main">{{ p.units|lnum }} {% t "unit(s)" "ইউনিট" %} &ndash; {{ p.hospital_name }}</span>
+  <span class="chip chip-normal">{{ p.get_status_display|tr }}{% if p.is_hidden %} ({% t "hidden" "লুকানো" %}){% endif %}</span></a>
+{% empty %}<p class="muted">{% t "You have not posted any blood needs." "আপনি এখনো কোনো রক্তের প্রয়োজন পোস্ট করেননি।" %}</p>{% endfor %}
+</div>
+{% endblock %}

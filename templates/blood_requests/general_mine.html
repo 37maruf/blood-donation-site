@@ -1,0 +1,11 @@
+{% extends "base.html" %}{% load bilingual %}
+{% block title %}{% t "My blood requests" "আমার রক্তের অনুরোধ" %}{% endblock %}
+{% block content %}
+<div class="page-head"><h1 class="page-title">{% t "My private blood requests" "আমার ব্যক্তিগত রক্তের অনুরোধ" %}</h1>
+  <a class="btn btn-brand" href="{% url 'blood_requests:general_create' %}">{% t "New request" "নতুন অনুরোধ" %}</a></div>
+<p class="fine">{% t "These are private and reviewed by our team. They are never published automatically." "এগুলো ব্যক্তিগত এবং আমাদের দল পর্যালোচনা করে। কিছুই স্বয়ংক্রিয়ভাবে প্রকাশ হয় না।" %}</p>
+<div class="table-wrap"><table class="table">
+<thead><tr><th scope="col">{% t "Submitted" "জমার তারিখ" %}</th><th scope="col">{% t "Blood" "রক্ত" %}</th><th scope="col">{% t "Units" "ইউনিট" %}</th><th scope="col">{% t "Hospital" "হাসপাতাল" %}</th><th scope="col">{% t "Needed by" "কবে লাগবে" %}</th><th scope="col">{% t "Status" "অবস্থা" %}</th></tr></thead>
+<tbody>{% for r in requests %}<tr><td>{{ r.created_at|date:"j M Y"|lnum }}</td><td><strong>{{ r.blood_group }}</strong></td><td>{{ r.units|lnum }}</td><td>{{ r.hospital }}</td><td>{{ r.required_date|date:"j M Y"|lnum }}</td><td>{{ r.get_status_display|tr }}</td></tr>
+{% empty %}<tr><td colspan="6" class="muted">{% t "No requests yet." "এখনো কোনো অনুরোধ নেই।" %}</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

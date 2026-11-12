@@ -1,0 +1,30 @@
+{% extends "base.html" %}{% load bilingual %}
+{% block title %}{% t "Account security" "অ্যাকাউন্টের নিরাপত্তা" %}{% endblock %}
+{% block content %}
+<div class="narrow">
+  <h1 class="page-title">{% t "Account security" "অ্যাকাউন্টের নিরাপত্তা" %}</h1>
+  <p class="muted">{% t "Signed in as" "লগইন করা আছে:" %} <strong>{{ user.email }}</strong></p>
+
+  <section class="panel">
+    <h2>{% t "Change password" "পাসওয়ার্ড পরিবর্তন" %}</h2>
+    <form method="post" novalidate>{% csrf_token %}<input type="hidden" name="action" value="password">
+      {% include "partials/_form_fields.html" with form=forms.password %}
+      <div class="form-actions"><button class="btn btn-brand">{% t "Change password" "পাসওয়ার্ড পরিবর্তন করুন" %}</button></div></form>
+  </section>
+
+  <section class="panel">
+    <h2>{% t "Change email" "ইমেইল পরিবর্তন" %}</h2>
+    <form method="post" novalidate>{% csrf_token %}<input type="hidden" name="action" value="email">
+      {% include "partials/_form_fields.html" with form=forms.email %}
+      <div class="form-actions"><button class="btn btn-brand">{% t "Change email" "ইমেইল পরিবর্তন করুন" %}</button></div></form>
+  </section>
+
+  <section class="panel panel-danger">
+    <h2>{% t "Deactivate account" "অ্যাকাউন্ট নিষ্ক্রিয় করুন" %}</h2>
+    <p>{% t "Your profile disappears from donor lists. Donation and request records are kept. To have personal data corrected or deleted, see the" "আপনার প্রোফাইল দাতার তালিকা থেকে সরে যাবে। রক্তদান ও অনুরোধের রেকর্ড থেকে যাবে। ব্যক্তিগত তথ্য সংশোধন বা মুছতে দেখুন" %} <a href="{% url 'content:contact' %}">{% t "contact page" "যোগাযোগ পাতা" %}</a>.</p>
+    <form method="post" novalidate data-confirm="{% t 'Deactivate your account?' 'আপনার অ্যাকাউন্ট নিষ্ক্রিয় করবেন?' %}">{% csrf_token %}<input type="hidden" name="action" value="deactivate">
+      {% include "partials/_form_fields.html" with form=forms.deactivate %}
+      <div class="form-actions"><button class="btn btn-danger-soft">{% t "Deactivate" "নিষ্ক্রিয় করুন" %}</button></div></form>
+  </section>
+</div>
+{% endblock %}

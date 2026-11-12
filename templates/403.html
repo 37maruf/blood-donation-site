@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% load bilingual %}
+{% block title %}{% t "Access denied" "প্রবেশাধিকার নেই" %}{% endblock %}
+{% block content %}
+<div class="empty-state">
+  <p class="err-code">403</p>
+  <h1>{% t "Access denied" "প্রবেশাধিকার নেই" %}</h1><p>{% t "You do not have permission to open this page." "এই পাতা খোলার অনুমতি আপনার নেই।" %}</p>
+  <a class="btn btn-brand" href="{% url 'core:home' %}">{% t "Back to home" "হোমে ফিরুন" %}</a>
+</div>
+{% endblock %}

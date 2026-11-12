@@ -1,0 +1,29 @@
+{% extends "base.html" %}{% load bilingual %}
+{% block title %}{{ profile.masked_name }}{% endblock %}
+{% block content %}
+<article class="narrow">
+  <header class="profile-head">
+    {% if profile.profile_image %}<img class="profile-photo" src="{{ profile.profile_image.url }}" alt="">{% else %}<span class="drop drop-xl"><span>{{ profile.blood_group }}</span></span>{% endif %}
+    <div><h1 class="page-title">{{ profile.full_name }}</h1>
+      <p><span class="chip chip-blood">{{ profile.blood_group }}</span> <span class="chip chip-ok">{% t "Available" "প্রস্তুত" %}</span></p>
+      <p class="meta"><svg class="ico" aria-hidden="true"><use href="#i-pin"/></svg>{{ profile.upazila|place }}, {{ profile.district|place }}</p></div>
+  </header>
+  <p class="fine">{{ disclaimer|tr }}</p>
+  <dl class="facts">
+    {% if privacy.show_area %}<div><dt>{% t "Area" "এলাকা" %}</dt><dd>{{ profile.area }}</dd></div>{% endif %}
+    {% if privacy.show_phone %}<div><dt>{% t "Phone" "ফোন" %}</dt><dd><a href="tel:{{ profile.phone }}">{{ profile.phone }}</a></dd></div>{% endif %}
+    {% if not privacy.show_area and not privacy.show_phone and not channels %}<div><dd class="muted">{% t "This donor keeps further details private." "এই দাতা আরও তথ্য গোপন রেখেছেন।" %}</dd></div>{% endif %}
+  </dl>
+  {% if channels %}
+  <div class="form-actions">
+    {% for ch in channels %}<form method="post" action="{% url 'contacts:click' profile.pk ch %}">{% csrf_token %}
+      <button class="btn btn-ghost">{% t "Contact via" "যোগাযোগ করুন" %} {{ ch|capfirst }}</button></form>{% endfor %}
+  </div>
+  <p class="fine">{% t "The site cannot verify that your message is delivered or answered." "আপনার বার্তা পৌঁছেছে বা উত্তর পেয়েছে কি না, সাইট তা যাচাই করতে পারে না।" %}</p>
+  {% endif %}
+  {% if can_request %}<div class="form-actions"><a class="btn btn-brand btn-lg" href="{% url 'blood_requests:request_create' profile.pk %}">{% t "Send a private donation request" "ব্যক্তিগত রক্তের অনুরোধ পাঠান" %}</a></div>{% endif %}
+  {% if history %}<h2 class="h-sm">{% t "Completed donations" "সম্পন্ন রক্তদান" %}</h2>
+    <ul class="plain-list">{% for r in history %}<li>{{ r.donation_date|date:"j M Y"|lnum }}{% if r.location %} &ndash; {{ r.location }}{% endif %}</li>{% endfor %}</ul>{% endif %}
+  {% include "partials/_report.html" with report_type="USER" report_target=profile.user_id %}
+</article>
+{% endblock %}

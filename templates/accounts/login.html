@@ -1,0 +1,23 @@
+{% extends "base.html" %}{% load bilingual %}
+{% block title %}{% t "Log in" "লগইন" %}{% endblock %}
+{% block content %}
+<div class="form-shell with-aside">
+  {% include "partials/_aside.html" %}
+  <section class="form-card">
+    <h1>{% t "Welcome back" "আবার স্বাগতম" %}</h1>
+    <p class="form-intro">{% t "Log in with your email and password." "ইমেইল ও পাসওয়ার্ড দিয়ে লগইন করুন।" %}</p>
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% if form.non_field_errors %}<div class="flash flash-danger" role="alert"><svg class="ico" aria-hidden="true"><use href="#i-alert"/></svg><span>{% for e in form.non_field_errors %}{{ e }} {% endfor %}</span></div>{% endif %}
+      <div class="row g-3 fields">
+      {% for field in form %}<div class="col-12"><label class="form-label" for="{{ field.id_for_label }}">{{ field.label|tr }}</label>{{ field }}
+        {% for e in field.errors %}<div class="field-error" role="alert">{{ e }}</div>{% endfor %}</div>{% endfor %}
+      </div>
+      <input type="hidden" name="next" value="{{ next }}">
+      <div class="form-actions"><button class="btn btn-brand btn-lg w-100">{% t "Log in" "লগইন" %}</button></div>
+    </form>
+    <p class="form-links"><a href="{% url 'accounts:password_reset' %}">{% t "Forgot password?" "পাসওয়ার্ড ভুলে গেছেন?" %}</a>
+      <a href="{% url 'accounts:register' %}">{% t "Create an account" "অ্যাকাউন্ট খুলুন" %}</a></p>
+  </section>
+</div>
+{% endblock %}

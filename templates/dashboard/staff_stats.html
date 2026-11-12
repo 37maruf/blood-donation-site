@@ -1,0 +1,13 @@
+{% extends "base.html" %}{% load bilingual %}
+{% block title %}{% t "Staff statistics" "কর্মীদের পরিসংখ্যান" %}{% endblock %}
+{% block content %}
+<div class="narrow"><h1 class="page-title">{% t "Statistics (cached up to 5 minutes)" "পরিসংখ্যান (সর্বোচ্চ ৫ মিনিট পুরোনো হতে পারে)" %}</h1>
+<dl class="river river-stack">
+  <div><dd>{{ stats.members|lnum }}</dd><dt>{% t "Active members" "সক্রিয় সদস্য" %}</dt></div>
+  <div><dd>{{ stats.available_donors|lnum }}</dd><dt>{% t "Available donors (60-day rule)" "প্রস্তুত দাতা (৬০ দিনের নিয়ম)" %}</dt></div>
+  <div><dd>{{ stats.completed_donations|lnum }}</dd><dt>{% t "Completed donations" "সম্পন্ন রক্তদান" %}</dt></div>
+  <div><dd>{{ stats.active_needs|lnum }}</dd><dt>{% t "Active blood needs" "চলমান রক্তের প্রয়োজন" %}</dt></div>
+  <div><dd>{{ open_general|lnum }}</dd><dt>{% t "Open general requests" "খোলা সাধারণ অনুরোধ" %}</dt></div>
+</dl>
+<div class="form-actions"><a class="btn btn-brand" href="/admin/">{% t "Open admin" "অ্যাডমিন খুলুন" %}</a></div></div>
+{% endblock %}

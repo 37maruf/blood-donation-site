@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% load bilingual %}
+{% block title %}{{ page.display_title }}{% endblock %}
+{% block content %}
+<article class="prose narrow">
+  <h1 class="page-title">{{ page.display_title }}</h1>
+  {{ page.display_body|prose }}
+  
+</article>
+{% endblock %}

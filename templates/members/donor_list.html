@@ -1,0 +1,29 @@
+{% extends "base.html" %}{% load bilingual %}
+{% block title %}{% if search %}{% t "Find a donor" "দাতা খুঁজুন" %}{% else %}{% t "Available donors" "প্রস্তুত রক্তদাতা" %}{% endif %}{% endblock %}
+{% block content %}
+<h1 class="page-title">{% if search %}{% t "Find a donor" "দাতা খুঁজুন" %}{% else %}{% t "Available donors in Rajbari" "রাজবাড়ীর প্রস্তুত রক্তদাতা" %}{% endif %}</h1>
+<p class="fine">{{ disclaimer|tr }}</p>
+{% if search %}
+<form method="get" class="search-panel" role="search">
+  <div><label class="form-label" for="{{ form.blood_group.id_for_label }}">{% t "Blood group" "রক্তের গ্রুপ" %}</label>{{ form.blood_group }}</div>
+  <div><label class="form-label" for="{{ form.upazila.id_for_label }}">{% t "Upazila" "উপজেলা" %}</label>{{ form.upazila }}</div>
+  <div><label class="form-label" for="{{ form.area.id_for_label }}">{% t "Area (donors who show it)" "এলাকা (যাঁরা দেখান)" %}</label>{{ form.area }}</div>
+  <button class="btn btn-brand">{% t "Search" "খুঁজুন" %}</button>
+</form>
+{% else %}<p><a class="btn btn-ghost btn-sm" href="{% url 'members:donor_search' %}">{% t "Search by blood group or place" "রক্তের গ্রুপ বা স্থান দিয়ে খুঁজুন" %}</a></p>{% endif %}
+<div class="grid-3">
+{% for d in page %}
+  <article class="donor">
+    <span class="drop drop-lg"><span>{{ d.blood_group }}</span></span>
+    <div class="donor-body">
+      <h2>{{ d.masked_name }}</h2>
+      <p class="meta"><svg class="ico" aria-hidden="true"><use href="#i-pin"/></svg>{{ d.upazila|place }}, {{ d.district|place }}</p>
+      <span class="chip chip-ok">{% t "Available" "প্রস্তুত" %}</span>
+      {% if user.is_authenticated %}<a class="donor-link stretched-link" href="{% url 'members:donor_detail' d.pk %}">{% t "View profile" "প্রোফাইল দেখুন" %}</a>
+      {% else %}<a class="donor-link stretched-link" href="{% url 'accounts:login' %}?next={% url 'members:donor_detail' d.pk %}">{% t "Log in to view profile" "প্রোফাইল দেখতে লগইন করুন" %}</a>{% endif %}
+    </div>
+  </article>
+{% empty %}<p class="muted">{% t "No available donors match right now." "এই মুহূর্তে মিলছে এমন কোনো প্রস্তুত দাতা নেই।" %}</p>{% endfor %}
+</div>
+{% include "partials/_pagination.html" %}
+{% endblock %}

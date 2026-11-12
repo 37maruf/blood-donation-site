@@ -1,0 +1,76 @@
+{% extends "base.html" %}{% load static bilingual %}
+{% block title %}{% t "Home" "হোম" %}{% endblock %}
+{% block fullwidth %}
+<section class="hero">
+  <div class="hero-sun" aria-hidden="true"></div>
+  <div class="container hero-grid">
+    <div class="hero-copy">
+      <h1>{% if intro %}{{ intro.display_title }}{% else %}{{ org.name|tr }}{% endif %}</h1>
+      {% if intro %}<p class="hero-lead">{{ intro.display_body|first_para }}</p>{% endif %}
+      <div class="hero-cta">
+        <a class="btn btn-brand btn-lg" href="{% url 'members:donor_search' %}">{% t "Find a donor" "দাতা খুঁজুন" %}</a>
+        <a class="btn btn-ghost btn-lg" href="{% url 'blood_requests:need_create' %}">{% t "Post a blood need" "রক্তের প্রয়োজন জানান" %}</a>
+        {% if not user.is_authenticated %}<a class="btn btn-sun btn-lg" href="{% url 'accounts:register' %}">{% t "Become a donor" "দাতা হোন" %}</a>{% endif %}
+      </div>
+    </div>
+    <section class="board" aria-labelledby="board-h">
+      <h2 id="board-h">{% t "Who can donate today" "আজ কারা রক্ত দিতে পারেন" %}</h2>
+      <p class="board-sub">{% t "Pick a blood group to see donors in Rajbari." "রাজবাড়ীর দাতাদের দেখতে একটি রক্তের গ্রুপ বেছে নিন।" %}</p>
+      <div class="board-grid">
+        {% for g in stats.by_group %}
+        <a class="bg-tile{% if g.count == 0 %} is-empty{% endif %}" href="{% url 'members:donor_search' %}?blood_group={{ g.group|urlencode }}"
+           aria-label="{{ g.group }}: {{ g.count|lnum }} {% t 'available' 'জন প্রস্তুত' %}">
+          <span class="bg-name">{{ g.group }}</span>
+          <span class="bg-count">{{ g.count|lnum }}</span>
+          <span class="bg-label">{% t "available" "প্রস্তুত" %}</span>
+        </a>{% endfor %}
+      </div>
+    </section>
+  </div>
+</section>
+
+<section class="container section" aria-label="{% t 'Community numbers' 'কমিউনিটির সংখ্যা' %}">
+  <dl class="river">
+    <div><dd>{{ stats.members|lnum }}</dd><dt>{% t "Members" "সদস্য" %}</dt></div>
+    <div><dd>{{ stats.available_donors|lnum }}</dd><dt>{% t "Donors available" "প্রস্তুত দাতা" %}</dt></div>
+    <div><dd>{{ stats.completed_donations|lnum }}</dd><dt>{% t "Donations completed" "সম্পন্ন রক্তদান" %}</dt></div>
+    <div><dd>{{ stats.active_needs|lnum }}</dd><dt>{% t "Open blood needs" "চলমান প্রয়োজন" %}</dt></div>
+  </dl>
+  <p class="fine">{% t "Counts only. Availability follows a 60-day website rule and is not medical clearance." "শুধু সংখ্যা। প্রাপ্যতা ৬০ দিনের ওয়েবসাইট-নিয়ম অনুসরণ করে এবং এটি চিকিৎসাগত ছাড়পত্র নয়।" %}</p>
+</section>
+
+{% if needs %}
+<section class="container section" aria-labelledby="needs-h">
+  <div class="section-head"><h2 id="needs-h">{% t "Blood needed now" "এখন রক্ত দরকার" %}</h2>
+    <a href="{% url 'blood_requests:need_list' %}">{% t "See all" "সব দেখুন" %}</a></div>
+  <div class="grid-3">{% for p in needs %}{% include "partials/_need_card.html" %}{% endfor %}</div>
+</section>
+{% endif %}
+
+<section class="container section" aria-labelledby="how-h">
+  <h2 id="how-h">{% t "How it works" "যেভাবে কাজ করে" %}</h2>
+  <ol class="steps">
+    <li><strong>{% t "Create an account" "অ্যাকাউন্ট খুলুন" %}</strong><span>{% t "It takes a minute. Everyone who joins is a member right away, no waiting." "এক মিনিটেই হয়ে যায়। যোগ দিলেই সঙ্গে সঙ্গে সদস্য, অপেক্ষার কিছু নেই।" %}</span></li>
+    <li><strong>{% t "Find a donor or post a need" "দাতা খুঁজুন বা প্রয়োজন জানান" %}</strong><span>{% t "Search by blood group and upazila, or tell the district a family needs blood." "রক্তের গ্রুপ ও উপজেলা দিয়ে খুঁজুন, অথবা কোনো পরিবারের রক্ত লাগলে সবাইকে জানান।" %}</span></li>
+    <li><strong>{% t "Donate and save a life" "রক্ত দিন, জীবন বাঁচান" %}</strong><span>{% t "Donors choose what to share. Blood is never sold on Surjotori." "দাতারা নিজেই ঠিক করেন কী প্রকাশ হবে। সূর্যতরীতে রক্ত কখনো বিক্রি হয় না।" %}</span></li>
+  </ol>
+</section>
+
+<section class="container section" aria-labelledby="camp-h">
+  <div class="section-head"><h2 id="camp-h">{% t "Campaigns" "কর্মসূচি" %}</h2>
+    <a href="{% url 'campaigns:list' %}">{% t "All campaigns" "সব কর্মসূচি" %}</a></div>
+  <div class="grid-3">
+  {% for c in campaigns %}{% include "partials/_campaign_card.html" %}
+  {% empty %}<p class="muted">{% t "New campaigns will be announced soon." "শিগগিরই নতুন কর্মসূচি ঘোষণা করা হবে।" %}</p>{% endfor %}
+  </div>
+</section>
+
+<section class="container section">
+  <div class="cta-band">
+    <div><h2>{% t "Need help, or want to volunteer?" "সাহায্য দরকার, বা স্বেচ্ছাসেবক হতে চান?" %}</h2>
+      <p>{% t "Visit the contact page or read more about who we are." "যোগাযোগ পাতায় যান, অথবা আমরা কারা তা আরও জানুন।" %}{% if org.phone %} {% t "Phone:" "ফোন:" %} {{ org.phone }}{% endif %}</p></div>
+    <div class="cta-actions"><a class="btn btn-brand" href="{% url 'content:contact' %}">{% t "Contact us" "যোগাযোগ করুন" %}</a>
+      <a class="btn btn-ghost" href="{% url 'content:about' %}">{% t "About us" "আমাদের কথা" %}</a></div>
+  </div>
+</section>
+{% endblock %}

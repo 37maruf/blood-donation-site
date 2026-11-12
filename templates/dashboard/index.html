@@ -1,0 +1,23 @@
+{% extends "base.html" %}{% load bilingual %}
+{% block title %}{% t "Dashboard" "ড্যাশবোর্ড" %}{% endblock %}
+{% block content %}
+<h1 class="page-title">{% t "Assalamu alaikum," "আসসালামু আলাইকুম," %} {{ profile.full_name }}</h1>
+{% if eligibility %}<div class="status-banner {% if eligibility.available %}is-ok{% else %}is-info{% endif %}">{{ eligibility.message|tr }}<div class="fine">{{ disclaimer|tr }}</div></div>{% endif %}
+<div class="tiles">
+  {% t "Notifications" "বিজ্ঞপ্তি" as l1 %}{% t "unread" "অপঠিত" as n1 %}{% include "dashboard/_tile.html" with label=l1 value=counts.unread note=n1 url="notifications:list" %}
+  {% t "Requests received" "পাওয়া অনুরোধ" as l2 %}{% t "pending" "অপেক্ষমাণ" as n2 %}{% include "dashboard/_tile.html" with label=l2 value=counts.received note=n2 url="blood_requests:request_received" %}
+  {% t "Requests sent" "পাঠানো অনুরোধ" as l3 %}{% t "total" "মোট" as n3 %}{% include "dashboard/_tile.html" with label=l3 value=counts.sent note=n3 url="blood_requests:request_sent" %}
+  {% t "My blood need posts" "আমার রক্তের পোস্ট" as l4 %}{% include "dashboard/_tile.html" with label=l4 value=counts.needs note=n3 url="blood_requests:need_mine" %}
+  {% t "My private requests" "আমার ব্যক্তিগত অনুরোধ" as l5 %}{% include "dashboard/_tile.html" with label=l5 value=counts.general note=n3 url="blood_requests:general_mine" %}
+  {% t "My donation history" "আমার রক্তদানের ইতিহাস" as l6 %}{% t "records" "রেকর্ড" as n6 %}{% include "dashboard/_tile.html" with label=l6 value=counts.donations note=n6 url="dashboard:donations" %}
+</div>
+<h2 class="h-sm">{% t "Quick actions" "দ্রুত কাজ" %}</h2>
+<div class="form-actions">
+  <a class="btn btn-brand" href="{% url 'blood_requests:need_create' %}">{% t "Post a blood need" "রক্তের প্রয়োজন জানান" %}</a>
+  <a class="btn btn-ghost" href="{% url 'blood_requests:general_create' %}">{% t "Private blood request" "ব্যক্তিগত রক্তের অনুরোধ" %}</a>
+  <a class="btn btn-ghost" href="{% url 'members:profile' %}">{% t "My profile" "আমার প্রোফাইল" %}</a>
+  <a class="btn btn-ghost" href="{% url 'members:privacy_settings' %}">{% t "Contact & privacy" "যোগাযোগ ও গোপনীয়তা" %}</a>
+  {% if profile.wants_to_donate %}<a class="btn btn-ghost" href="{% url 'members:donation_settings' %}">{% t "Willingness & last donation" "আগ্রহ ও সর্বশেষ রক্তদান" %}</a>{% endif %}
+  {% if user.is_staff %}<a class="btn btn-ghost" href="{% url 'dashboard:staff_stats' %}">{% t "Staff statistics" "কর্মীদের পরিসংখ্যান" %}</a> <a class="btn btn-ghost" href="/admin/">Admin</a>{% endif %}
+</div>
+{% endblock %}

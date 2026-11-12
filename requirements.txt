@@ -1,0 +1,11 @@
+# Django 5.2 is the current LTS line. Patch versions could not be resolved offline while
+# generating this project: after `pip install -r requirements.txt` run `pip freeze > requirements.lock`
+# and pin exact versions for production.
+Django>=5.2,<5.3
+psycopg[binary]>=3.2
+dj-database-url>=2.2
+whitenoise>=6.7
+Pillow>=10.4
+argon2-cffi>=23.1
+django-storages[s3]>=1.14
+sentry-sdk>=2.0

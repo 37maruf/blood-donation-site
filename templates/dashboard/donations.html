@@ -1,0 +1,10 @@
+{% extends "base.html" %}{% load bilingual %}
+{% block title %}{% t "My donation history" "আমার রক্তদানের ইতিহাস" %}{% endblock %}
+{% block content %}
+<h1 class="page-title">{% t "My donation history" "আমার রক্তদানের ইতিহাস" %}</h1>
+<p class="fine">{% t "Records are managed by our team. You can update your own last donation date under" "রেকর্ড আমাদের দল পরিচালনা করে। নিজের সর্বশেষ রক্তদানের তারিখ হালনাগাদ করতে যান" %} <a href="{% url 'members:donation_settings' %}">{% t "Donation willingness" "রক্তদানের আগ্রহ" %}</a>.</p>
+<div class="table-wrap"><table class="table">
+<thead><tr><th scope="col">{% t "Date" "তারিখ" %}</th><th scope="col">{% t "Location" "অবস্থান" %}</th><th scope="col">{% t "Status" "অবস্থা" %}</th></tr></thead>
+<tbody>{% for r in records %}<tr><td>{{ r.donation_date|date:"j M Y"|lnum }}</td><td>{{ r.location|default:"-" }}</td><td>{{ r.get_status_display|tr }}</td></tr>
+{% empty %}<tr><td colspan="3" class="muted">{% t "No records yet." "এখনো কোনো রেকর্ড নেই।" %}</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

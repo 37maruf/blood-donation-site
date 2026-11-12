@@ -1,0 +1,9 @@
+{% load bilingual %}
+<article class="camp">
+  <img class="camp-img" src="{{ c.image_url }}" alt="" loading="lazy">
+  <div class="camp-body">
+    <h3><a class="stretched-link" href="{% url 'campaigns:detail' c.pk %}">{{ c.display_title }}</a></h3>
+    <p class="meta"><svg class="ico" aria-hidden="true"><use href="#i-cal"/></svg>{{ c.starts_at|date:"j M Y, g:i A"|lnum }}</p>
+    <p class="meta"><svg class="ico" aria-hidden="true"><use href="#i-pin"/></svg>{{ c.display_venue }}</p>
+  </div>
+</article>

@@ -1,0 +1,20 @@
+{% extends "base.html" %}{% load bilingual %}
+{% block title %}{{ campaign.display_title }}{% endblock %}
+{% block content %}
+<article class="narrow detail">
+  <img class="detail-img" src="{{ campaign.image_url }}" alt="">
+  <h1 class="page-title">{{ campaign.display_title }}</h1>
+  <p class="meta"><svg class="ico" aria-hidden="true"><use href="#i-cal"/></svg>{{ campaign.starts_at|date:"l, j F Y, g:i A"|lnum }} &ndash; {{ campaign.ends_at|date:"g:i A"|lnum }}</p>
+  <p class="meta"><svg class="ico" aria-hidden="true"><use href="#i-pin"/></svg>{{ campaign.display_venue }}</p>
+  <div class="prose">{{ campaign.display_description|linebreaks }}</div>
+  {% if spots_left is not None %}<p class="chip chip-normal">{% t "Spots left:" "বাকি আসন:" %} {{ spots_left|lnum }}</p>{% endif %}
+  <div class="form-actions">
+  {% if campaign.phase != 'past' %}
+    {% if registered %}<div class="flash flash-success"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg><span>{% t "You are registered for this campaign." "আপনি এই কর্মসূচিতে নিবন্ধিত।" %}</span></div>
+    {% elif user.is_authenticated %}
+      <form method="post" action="{% url 'campaigns:register' campaign.pk %}">{% csrf_token %}<button class="btn btn-brand btn-lg">{% t "Register to attend" "অংশগ্রহণের জন্য নিবন্ধন করুন" %}</button></form>
+    {% else %}<a class="btn btn-brand btn-lg" href="{% url 'accounts:login' %}?next={{ request.path }}">{% t "Log in to register" "নিবন্ধনের জন্য লগইন করুন" %}</a>{% endif %}
+  {% else %}<p class="muted">{% t "This campaign has ended." "এই কর্মসূচি শেষ হয়েছে।" %}</p>{% endif %}
+  </div>
+</article>
+{% endblock %}

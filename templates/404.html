@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% load bilingual %}
+{% block title %}{% t "Page not found" "পাতাটি পাওয়া যায়নি" %}{% endblock %}
+{% block content %}
+<div class="empty-state">
+  <p class="err-code">404</p>
+  <h1>{% t "Page not found" "পাতাটি পাওয়া যায়নি" %}</h1><p>{% t "We could not find the page you are looking for." "আপনি যে পাতাটি খুঁজছেন তা আমরা পাইনি।" %}</p>
+  <a class="btn btn-brand" href="{% url 'core:home' %}">{% t "Back to home" "হোমে ফিরুন" %}</a>
+</div>
+{% endblock %}

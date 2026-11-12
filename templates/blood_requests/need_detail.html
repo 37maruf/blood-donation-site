@@ -1,0 +1,41 @@
+{% extends "base.html" %}{% load bilingual %}
+{% block title %}{{ post.blood_group }} {% t "blood needed" "রক্ত দরকার" %}{% endblock %}
+{% block content %}
+<article class="narrow">
+  {% if post.is_hidden %}<div class="flash flash-warning"><svg class="ico" aria-hidden="true"><use href="#i-alert"/></svg><span>{% t "This post is hidden by moderators" "এই পোস্টটি মডারেটররা লুকিয়ে রেখেছেন" %}{% if post.hidden_reason %}: {{ post.hidden_reason }}{% endif %}.</span></div>{% endif %}
+  <header class="need-hero need-{{ post.urgency|lower }}">
+    <span class="drop drop-xl"><span>{{ post.blood_group }}</span></span>
+    <div>
+      <h1>{{ post.units|lnum }} {% if post.units == 1 %}{% t "unit needed" "ইউনিট রক্ত দরকার" %}{% else %}{% t "units needed" "ইউনিট রক্ত দরকার" %}{% endif %}</h1>
+      <span class="chip chip-{{ post.urgency|lower }}">{{ post.get_urgency_display|tr }}</span>
+      <span class="chip chip-normal">{{ post.get_status_display|tr }}</span>
+    </div>
+  </header>
+  <dl class="facts">
+    <div><dt>{% t "Hospital" "হাসপাতাল" %}</dt><dd>{{ post.hospital_name }}, {{ post.hospital_location }}</dd></div>
+    <div><dt>{% t "Needed by" "কবে লাগবে" %}</dt><dd>{{ post.required_date|date:"l, j F Y"|lnum }}</dd></div>
+    {% if post.patient_name_public %}<div><dt>{% t "Patient" "রোগী" %}</dt><dd>{{ post.patient_name }}</dd></div>{% endif %}
+    {% if show_contact %}<div><dt>{% t "Contact" "যোগাযোগ" %}</dt><dd><a href="tel:{{ post.contact_phone }}">{{ post.contact_phone }}</a></dd></div>
+    {% elif post.contact_public %}<div><dt>{% t "Contact" "যোগাযোগ" %}</dt><dd><a href="{% url 'accounts:login' %}?next={{ request.path }}">{% t "Log in" "লগইন করুন" %}</a> {% t "to see the contact number." "যোগাযোগের নম্বর দেখতে।" %}</dd></div>{% endif %}
+  </dl>
+  {% if post.details %}<h2 class="h-sm">{% t "Details" "বিস্তারিত" %}</h2><div class="prose">{{ post.details|linebreaks }}</div>{% endif %}
+
+  {% if is_owner %}
+    <div class="form-actions">
+    {% if post.status == 'ACTIVE' %}
+      <a class="btn btn-ghost" href="{% url 'blood_requests:need_edit' post.pk %}">{% t "Edit" "সম্পাদনা" %}</a>
+      <form method="post" action="{% url 'blood_requests:need_close' post.pk %}" data-confirm="{% t 'Mark this request as fulfilled?' 'অনুরোধটি পূরণ হয়েছে বলে চিহ্নিত করবেন?' %}">{% csrf_token %}<input type="hidden" name="status" value="FULFILLED"><button class="btn btn-ok">{% t "Mark fulfilled" "পূরণ হয়েছে" %}</button></form>
+      <form method="post" action="{% url 'blood_requests:need_close' post.pk %}" data-confirm="{% t 'Cancel this request?' 'এই অনুরোধ বাতিল করবেন?' %}">{% csrf_token %}<input type="hidden" name="status" value="CANCELLED"><button class="btn btn-danger-soft">{% t "Cancel request" "অনুরোধ বাতিল" %}</button></form>
+    {% endif %}</div>
+  {% elif post.status == 'ACTIVE' and not post.is_hidden %}
+    {% if user.is_authenticated %}
+    <form method="post" action="{% url 'blood_requests:need_respond' post.pk %}" class="panel">{% csrf_token %}
+      <label class="form-label" for="{{ response_form.message.id_for_label }}">{% t "I can help" "আমি সাহায্য করতে পারি" %}</label>
+      <div class="input-group">{{ response_form.message }}<button class="btn btn-brand">{% t "Offer to donate" "রক্ত দিতে চাই" %}</button></div>
+      <div class="form-text">{% t "The owner is notified. Please follow blood centre guidance on donor fitness." "পোস্টদাতাকে জানানো হবে। দাতার শারীরিক উপযুক্ততায় ব্লাড সেন্টারের নির্দেশনা মানুন।" %}</div>
+    </form>
+    {% else %}<div class="form-actions"><a class="btn btn-brand btn-lg" href="{% url 'accounts:login' %}?next={{ request.path }}">{% t "Log in to offer help" "সাহায্যের প্রস্তাব দিতে লগইন করুন" %}</a></div>{% endif %}
+  {% endif %}
+  {% if user.is_authenticated and not is_owner %}{% include "partials/_report.html" with report_type=report_type report_target=post.pk %}{% endif %}
+</article>
+{% endblock %}

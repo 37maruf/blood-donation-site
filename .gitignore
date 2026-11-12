@@ -1,0 +1,52 @@
+# ---------- Secrets & local config (never commit) ----------
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# ---------- Python virtual environments ----------
+.venv/
+venv/
+env/
+ENV/
+
+# ---------- Python build / cache ----------
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+build/
+dist/
+.mypy_cache/
+.ruff_cache/
+
+# ---------- Tests & coverage ----------
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+
+# ---------- Django ----------
+*.log
+db.sqlite3
+db.sqlite3-journal
+/media/
+/staticfiles/
+local_settings.py
+
+# ---------- Deployment ----------
+.vercel
+
+# ---------- Editors & OS ----------
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---------- Node (if front-end tooling is ever added) ----------
+node_modules/

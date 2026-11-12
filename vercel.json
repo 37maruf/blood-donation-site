@@ -1,0 +1,5 @@
+{
+  "buildCommand": "bash build_files.sh",
+  "rewrites": [{ "source": "/(.*)", "destination": "/api/index" }],
+  "crons": [{ "path": "/internal/cron/cleanup/", "schedule": "0 3 * * *" }]
+}

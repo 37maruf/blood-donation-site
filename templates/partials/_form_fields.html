@@ -1,0 +1,15 @@
+{% load bilingual %}
+{% if form.non_field_errors %}<div class="flash flash-danger" role="alert"><svg class="ico" aria-hidden="true"><use href="#i-alert"/></svg><span>{% for e in form.non_field_errors %}{{ e|tr }} {% endfor %}</span></div>{% endif %}
+<div class="row g-3 fields">
+{% for field in form %}{% if field.is_hidden %}{{ field }}{% else %}
+  <div class="{% if field.widget_type == 'checkbox' or field.widget_type == 'textarea' or field.widget_type == 'clearablefile' or field.widget_type == 'fileinput' or form.fields|length <= 3 %}col-12{% else %}col-md-6{% endif %}" data-field="{{ field.name }}">
+  {% if field.widget_type == 'checkbox' %}
+    <div class="form-check tick">{{ field }}<label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label|tr }}</label></div>
+  {% else %}
+    <label class="form-label" for="{{ field.id_for_label }}">{{ field.label|tr }}{% if not field.field.required %} <span class="opt">{% t "optional" "ঐচ্ছিক" %}</span>{% endif %}</label>{{ field }}
+  {% endif %}
+  {% if field.help_text %}<div class="form-text">{{ field.help_text|tr }}</div>{% endif %}
+  {% for error in field.errors %}<div class="field-error" role="alert">{{ error|tr }}</div>{% endfor %}
+  </div>
+{% endif %}{% endfor %}
+</div>

@@ -1,0 +1,10 @@
+{% extends "base.html" %}{% load bilingual %}
+{% block title %}{{ page.display_title }}{% endblock %}
+{% block content %}
+<article class="prose narrow">
+  <h1 class="page-title">{{ page.display_title }}</h1>
+  {{ page.display_body|prose }}
+  {% if org.display_retention_note %}<h2>{% t "Retention" "সংরক্ষণের মেয়াদ" %}</h2>{{ org.display_retention_note|linebreaks }}{% endif %}
+  <p class="fine">{% t "Terms version in force:" "বর্তমান শর্তের সংস্করণ:" %} {{ TERMS_VERSION|default:"-" }}</p>
+</article>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}{% load bilingual %}
+{% block title %}{% t "My profile" "আমার প্রোফাইল" %}{% endblock %}
+{% block content %}
+<div class="narrow">
+  <header class="profile-head">
+    {% if profile.profile_image %}<img class="profile-photo" src="{{ profile.profile_image.url }}" alt="">{% else %}<span class="avatar avatar-xl" aria-hidden="true">{{ profile.full_name|slice:":1"|upper }}</span>{% endif %}
+    <div><h1 class="page-title">{{ profile.full_name }}</h1><p class="muted">{{ user.email }}</p></div>
+  </header>
+  {% if profile.wants_to_donate %}
+  <div class="status-banner {% if eligibility.available %}is-ok{% else %}is-info{% endif %}">
+    <strong>{% t "Donor status:" "দাতার অবস্থা:" %}</strong> {{ eligibility.message|tr }}
+    {% if eligibility.next_eligible and not eligibility.available %}<br>{% t "Next eligible on" "পরবর্তী উপযুক্ত তারিখ:" %} {{ eligibility.next_eligible|date:"j M Y"|lnum }}.{% endif %}
+    <div class="fine">{{ disclaimer|tr }}</div>
+  </div>{% endif %}
+  <dl class="facts">
+    <div><dt>{% t "Phone" "ফোন" %}</dt><dd>{{ profile.phone }}</dd></div>
+    <div><dt>WhatsApp</dt><dd>{{ profile.whatsapp_number }}</dd></div>
+    <div><dt>{% t "Location" "অবস্থান" %}</dt><dd>{{ profile.area }}, {{ profile.upazila|place }}, {{ profile.district|place }}</dd></div>
+    <div><dt>{% t "I want to donate" "আমি রক্ত দিতে চাই" %}</dt><dd>{% if profile.wants_to_donate %}{% t "Yes" "হ্যাঁ" %}{% else %}{% t "No" "না" %}{% endif %}</dd></div>
+    <div><dt>{% t "I may need blood" "আমার রক্ত লাগতে পারে" %}</dt><dd>{% if profile.needs_blood %}{% t "Yes" "হ্যাঁ" %}{% else %}{% t "No" "না" %}{% endif %}</dd></div>
+    {% if profile.wants_to_donate %}
+    <div><dt>{% t "Blood group" "রক্তের গ্রুপ" %}</dt><dd><span class="chip chip-blood">{{ profile.blood_group }}</span></dd></div>
+    <div><dt>{% t "Last donation" "সর্বশেষ রক্তদান" %}</dt><dd>{% if profile.never_donated %}{% t "Never donated" "কখনো দেননি" %}{% else %}{{ profile.confirmed_last_donation_date|date:"j M Y"|lnum }}{% endif %}</dd></div>
+    <div><dt>{% t "Willingness" "আগ্রহ" %}</dt><dd>{{ profile.get_donation_willingness_display|tr }}</dd></div>{% endif %}
+  </dl>
+  <div class="form-actions">
+    <a class="btn btn-brand" href="{% url 'members:profile_edit' %}">{% t "Edit profile" "প্রোফাইল সম্পাদনা" %}</a>
+    <a class="btn btn-ghost" href="{% url 'members:privacy_settings' %}">{% t "Contact & privacy" "যোগাযোগ ও গোপনীয়তা" %}</a>
+    {% if profile.wants_to_donate %}<a class="btn btn-ghost" href="{% url 'members:donation_settings' %}">{% t "Donation willingness" "রক্তদানের আগ্রহ" %}</a>{% endif %}
+    <a class="btn btn-ghost" href="{% url 'accounts:security' %}">{% t "Account security" "অ্যাকাউন্টের নিরাপত্তা" %}</a>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "base.html" %}{% load bilingual %}
+{% block title %}{% t "Blood needs" "রক্তের প্রয়োজন" %}{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1 class="page-title">{% t "Blood needs in Rajbari" "রাজবাড়ীতে রক্তের প্রয়োজন" %}</h1>
+  <a class="btn btn-brand" href="{% url 'blood_requests:need_create' %}">{% t "Post a blood need" "রক্তের প্রয়োজন জানান" %}</a>
+</div>
+<form method="get" class="filter-bar" role="search">
+  <div>{{ form.blood_group }}</div><div>{{ form.status }}</div>
+  <button class="btn btn-ghost">{% t "Filter" "ছাঁকুন" %}</button>
+</form>
+<div class="grid-2">
+{% for p in page %}{% include "partials/_need_card.html" %}
+{% empty %}<p class="muted">{% t "No blood needs match these filters." "এই ফিল্টারে কোনো রক্তের প্রয়োজন মেলেনি।" %}</p>{% endfor %}
+</div>
+{% include "partials/_pagination.html" %}
+{% endblock %}

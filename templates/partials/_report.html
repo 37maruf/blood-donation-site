@@ -1,0 +1,20 @@
+{% load bilingual %}
+<details class="report">
+  <summary>{% t "Report a problem" "সমস্যা জানান" %}</summary>
+  <form method="post" action="{% url 'moderation:report' %}">
+    {% csrf_token %}
+    <input type="hidden" name="target_type" value="{{ report_type }}">
+    <input type="hidden" name="target_id" value="{{ report_target }}">
+    <label class="form-label" for="rep-reason">{% t "Reason" "কারণ" %}</label>
+    <select id="rep-reason" name="reason" class="form-select mb-2">
+      <option value="SPAM">{% t "Spam or scam" "স্প্যাম বা প্রতারণা" %}</option>
+      <option value="FAKE">{% t "Fake or misleading" "ভুয়া বা বিভ্রান্তিকর" %}</option>
+      <option value="ABUSE">{% t "Abusive behaviour" "অশোভন আচরণ" %}</option>
+      <option value="PRIVACY">{% t "Privacy concern" "গোপনীয়তা নিয়ে উদ্বেগ" %}</option>
+      <option value="OTHER">{% t "Other" "অন্যান্য" %}</option>
+    </select>
+    <label class="form-label" for="rep-details">{% t "Details" "বিস্তারিত" %} <span class="opt">{% t "optional" "ঐচ্ছিক" %}</span></label>
+    <textarea id="rep-details" name="details" rows="2" maxlength="1000" class="form-control mb-2"></textarea>
+    <button class="btn btn-ghost btn-sm">{% t "Send report" "রিপোর্ট পাঠান" %}</button>
+  </form>
+</details>

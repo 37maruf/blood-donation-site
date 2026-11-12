@@ -1,0 +1,13 @@
+{% extends "base.html" %}{% load bilingual %}
+{% block title %}{% t "Campaigns" "কর্মসূচি" %}{% endblock %}
+{% block content %}
+<h1 class="page-title">{% t "Campaigns & programmes" "কর্মসূচি ও আয়োজন" %}</h1>
+<ul class="tabs" aria-label="{% t 'Filter campaigns' 'কর্মসূচি ছাঁকুন' %}">
+  {% for key, label in tabs %}<li><a class="{% if phase == key %}on{% endif %}" href="?when={{ key }}">{{ label|tr }}</a></li>{% endfor %}
+</ul>
+<div class="grid-3">
+{% for c in page %}{% include "partials/_campaign_card.html" %}
+{% empty %}<p class="muted">{% t "No campaigns in this view." "এই তালিকায় কোনো কর্মসূচি নেই।" %}</p>{% endfor %}
+</div>
+{% include "partials/_pagination.html" with querystring="when="|add:phase %}
+{% endblock %}
